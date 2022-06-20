@@ -36,6 +36,8 @@ Or just execute one of the binaries in the bin dir:
 cd /path/to/jatube/bin && java App
 ```
 
+* **Note:** The Current project was designed and only used on linux system. Feel free to modify the scripts to use and upload any update for this cases.
+
 ## Requirements
 
 To use it you need the following languages installed:
