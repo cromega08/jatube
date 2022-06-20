@@ -1,18 +1,60 @@
-## Getting Started
+# Jatube
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+A youtube downloader make with java and python. It's an application that, as said before, allow you to download files from youtube.
 
-## Folder Structure
+## Usage
 
-The workspace contains two folders by default, where:
+After copy the repository in you local machine:
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+1. Move to the dir where is the project:
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+    ```bash
+    cd /path/to/jatube/src
+    ```
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+2. Compile the file:
 
-## Dependency Management
+    ```bash
+    javac App.java
+    ```
 
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+3. Run:
+
+    ```bash
+    java App
+    ```
+
+* Simplified:
+
+    ```bash
+    cd /path/to/jatube/src && javac App.java && java App
+    ```
+
+Or just execute one of the binaries in the bin dir:
+
+```bash
+cd /path/to/jatube/bin && java App
+```
+
+## Requirements
+
+To use it you need the following languages installed:
+
+* Java (JVM 17+)
+* Python (3.10+)
+
+For Python, you need to download the following packages:
+
+* Pytube
+
+**Important:** Until date (20-06-2022) Pytube has a bug with the Cypher.py script, if you have problems, could try this solution:
+
+[![Pytube Solution](/imgs/pytube_solution.png)](https://github.com/pytube/pytube/issues/1281) _Click on image to go to the discussion_
+
+## Authors
+
+* [@Cromega08](https://www.github.com/cromega08)
+
+## License
+
+* [GNU AGPL v3.0](https://choosealicense.com/licenses/agpl-3.0/)
