@@ -16,7 +16,7 @@ public class YoutubeDownloader implements ActionListener {
     private static Dimension screen_size;
     private static JPanel for_input, for_buttons;
     private static JTextField input_url;
-    private static ImageIcon logo;
+    private static ImageIcon logo; //* The Image was downloaded from FlatIcon
     private static JButton location, download, only_audio;
     private static Border line_border;
     private static JFileChooser choose_dir;
