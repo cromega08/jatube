@@ -5,29 +5,36 @@ import java.awt.*;
 import java.awt.event.*;
 
 import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class YoutubeDownloader implements ActionListener {
 
-    Color main, second, third, contrast;
-    JFrame main_window, settings_window;
-    Toolkit tools;
-    Dimension screen_size;
-    JPanel for_input, for_checkbox, for_buttons;
-    JTextField input;
-    JCheckBox only_audio;
-    Image non_scale_1, non_scale_2;
-    ImageIcon checked, non_checked;
-    JButton location, download, apply;
-    Border line_border;
-    JFileChooser chose_dir;
-    
+    private static Color main, second, third, contrast;
+    private static JFrame main_window;
+    private static Toolkit tools;
+    private static Dimension screen_size;
+    private static JPanel for_input, for_buttons;
+    private static JTextField input_url;
+    private static ImageIcon logo;
+    private static JButton location, download, only_audio;
+    private static Border line_border;
+    private static JFileChooser choose_dir;
+    private static String default_path;
+    private static FileHandler file_handler;
     
     YoutubeDownloader() {
 
         // * Supply elements
+
+        file_handler = new FileHandler();
+        default_path = init();
         
-        chose_dir = new JFileChooser();
-        chose_dir.setCurrentDirectory(new File("../downloads"));
+        choose_dir = new JFileChooser();
+        choose_dir.setDialogTitle("New Location");
+        choose_dir.setCurrentDirectory(new File(default_path));
+        choose_dir.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        choose_dir.setAcceptAllFileFilterUsed(false);
 
         main = new Color(0x000000);
         second = new Color(0x3E3636);
@@ -41,14 +48,12 @@ public class YoutubeDownloader implements ActionListener {
         int screen_width = (int) screen_size.getWidth();
         int screen_height = (int) screen_size.getHeight();
 
-        non_scale_1 =  new ImageIcon("../imgs/empty-checkbox.png").getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-        non_scale_2 =  new ImageIcon("../imgs/done.png").getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-        checked = new ImageIcon(non_scale_2);
-        non_checked = new ImageIcon(non_scale_1);
+        logo = new ImageIcon("../imgs/jatube.png");
 
         // * Buttons
 
-        location = new JButton("Preferred location");
+        location = new JButton(default_path);
+        location.setPreferredSize(new Dimension((screen_width/4)-25, (screen_height/8)/4));
         location.setFocusPainted(false);
         location.setContentAreaFilled(false);
         location.setBorder(line_border);
@@ -64,101 +69,106 @@ public class YoutubeDownloader implements ActionListener {
         download.setBackground(second);
         download.addActionListener(this);
 
-        // * Checkboxes
-
-        only_audio = new JCheckBox();
-        only_audio.setBackground(third);
-        only_audio.setForeground(contrast);
-        only_audio.setText("Only Audio");
+        only_audio = new JButton("Only Audio");
         only_audio.setFocusPainted(false);
-        only_audio.setIcon(non_checked);
-        only_audio.setSelectedIcon(checked);
+        only_audio.setContentAreaFilled(false);
+        only_audio.setBorder(line_border);
+        only_audio.setForeground(contrast);
+        only_audio.setBackground(second);
+        only_audio.addActionListener(this);
 
         // * Text Components
 
-        input = new JTextField();
-        input.setPreferredSize(new Dimension((screen_width/4)-25, (screen_height/8)/4));
-        input.setForeground(contrast);
-        input.setCaretColor(third);
-        input.setBackground(main);
-        input.setBorder(line_border);
-        input.setText("URL");
+        input_url = new JTextField();
+        input_url.setPreferredSize(new Dimension((screen_width/4)-25, (screen_height/8)/4));
+        input_url.setForeground(contrast);
+        input_url.setCaretColor(third);
+        input_url.setBackground(main);
+        input_url.setBorder(line_border);
+        input_url.setText("URL");
+        input_url.setHorizontalAlignment(JTextField.CENTER);
 
         // * Div Components
 
         for_input = new JPanel();
         for_input.setBackground(main);
-        for_input.add(input);
-        for_input.setAlignmentY(JPanel.CENTER_ALIGNMENT);
+        for_input.add(input_url);
+        for_input.add(location);
+        for_input.setAlignmentY(JPanel.CENTER_ALIGNMENT);;
 
-        for_checkbox = new JPanel();
-        for_checkbox.setBackground(main);
-        for_checkbox.add(only_audio);
-        for_checkbox.setAlignmentY(JPanel.CENTER_ALIGNMENT);
-        
         for_buttons = new JPanel();
+        for_buttons.setLayout(new FlowLayout());
         for_buttons.setBackground(main);
-        for_buttons.add(location);
         for_buttons.add(download);
+        for_buttons.add(only_audio);
         for_buttons.setAlignmentY(JPanel.CENTER_ALIGNMENT);
 
         // * Windows Settings
 
         main_window = new JFrame();
-        main_window.setSize(screen_width/4,screen_height/6);
-        main_window.setResizable(false);
-        main_window.setLayout(new GridLayout(3,1));
-        main_window.setLocation(screen_width, 50);
+        main_window.setIconImage(logo.getImage());
         main_window.setTitle("Youtube Downloader");
+        main_window.setSize(screen_width/4,screen_height/5);
+        main_window.setResizable(false);
+        main_window.setLayout(new GridLayout(2,1));
+        main_window.setLocation(screen_width, 50);
+        main_window.getContentPane().setBackground(main);
         main_window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        settings_window = new JFrame();
-        settings_window.setSize(screen_width/4,screen_height/4);
-        settings_window.setResizable(false);
-        // settings_window.setLayout(new GridLayout(2,1));
-        settings_window.setTitle("Settings");
-        settings_window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // * Add Components and Activate
 
         main_window.add(for_input);
-        main_window.add(for_checkbox);
         main_window.add(for_buttons);
 
         main_window.setVisible(true);
     }
 
-    public static void main(String[] args) {
-        new YoutubeDownloader();
-    }
-
     @Override
     public void actionPerformed(ActionEvent event) {
         if (event.getSource() == location) {
-            settings_window.setLocation(main_window.getLocationOnScreen());
-            main_window.setVisible(false);
-            settings_window.setVisible(true);
+            int choosed_dir = choose_dir.showOpenDialog(main_window);
+
+            if (choosed_dir == JFileChooser.APPROVE_OPTION) {
+                String new_path =  choose_dir.getSelectedFile().getAbsolutePath();
+                file_handler.write_settings(new_path);
+                location.setText(new_path);
+                JOptionPane.showMessageDialog(main_window, "The default location was changed successfully", "Default Location", JOptionPane.INFORMATION_MESSAGE);
+            }
         }
         if (event.getSource() == download) {
+            if (check_url(input_url.getText())) {download_stream(input_url.getText(), false);}
+            else {JOptionPane.showMessageDialog(main_window, "Please, enter a valid URL", "Invalid URL", JOptionPane.ERROR_MESSAGE);}
+        }
 
-            String current_dir = System.getProperty("user.dir");
-            String url = input.getText();
-            String argument = only_audio.isSelected()? "-a":"";
-            try {
-                Runtime.getRuntime().exec(String.format("python3 %s/downloader.py %s %s", current_dir, argument, url));
-                JOptionPane.showMessageDialog(main_window, "Your video was downloaded", "Download Completed", JOptionPane.INFORMATION_MESSAGE);
-            }
-            
-            catch (Exception error) {
-                JOptionPane.showMessageDialog(main_window, String.format("Can'download from: %s", url), "Error Downloading", JOptionPane.ERROR_MESSAGE);
-                System.out.println(error.getMessage());
-            }
+        if (event.getSource() == only_audio) {
+            if (check_url(input_url.getText())) {download_stream(input_url.getText(), true);}
+            else {JOptionPane.showMessageDialog(main_window, "Please, enter a valid URL", "Invalid URL", JOptionPane.ERROR_MESSAGE);}
         }
     }
 
-    private String init() {
-        FileHandler path = new FileHandler();
-        if (!path.check_settings_file()) {path.create_settings();}
-        return path.get_settings();
+    private static String init() {
+        if (!file_handler.check_settings_file()) {file_handler.create_settings();}
+        return file_handler.get_settings();
+    }
+
+    private static boolean check_url(String url) {
+        Pattern pattern = Pattern.compile("(www\\.|music\\.|youtu\\.)(youtube|youtu\\.be|be)");
+        Matcher matcher = pattern.matcher(url);
+        if (matcher.find()){return true;}
+        return false;
+    }
+
+    private static void download_stream(String url, boolean selected_audio) {
+        String current_dir = System.getProperty("user.dir");
+        String argument = selected_audio? "-a":"";
+        try {
+            Runtime.getRuntime().exec(String.format("python3 %s/downloader.py %s %s %s", current_dir, argument, default_path, url));
+            JOptionPane.showMessageDialog(main_window, "The download may take time, wait until the file appears in your directory and enjoy", "Download Completed", JOptionPane.INFORMATION_MESSAGE);
+        }
+        
+        catch (Exception error) {
+            JOptionPane.showMessageDialog(main_window, String.format("Can'download from: %s", url), "Error Downloading", JOptionPane.ERROR_MESSAGE);
+            System.out.println(error.getMessage());
+        }
     }
 }

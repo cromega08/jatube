@@ -1,1 +1,0 @@
-        // settings.setFocusPainted(false);
