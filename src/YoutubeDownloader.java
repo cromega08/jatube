@@ -131,6 +131,7 @@ public class YoutubeDownloader implements ActionListener {
             if (choosed_dir == JFileChooser.APPROVE_OPTION) {
                 String new_path =  choose_dir.getSelectedFile().getAbsolutePath();
                 file_handler.write_settings(new_path);
+                default_path = new_path;
                 location.setText(new_path);
                 JOptionPane.showMessageDialog(main_window, "The default location was changed successfully", "Default Location", JOptionPane.INFORMATION_MESSAGE);
             }
